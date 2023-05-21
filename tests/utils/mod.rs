@@ -57,7 +57,7 @@ impl WiresmithContainer {
             // SYS_ADMIN could be removed when https://github.com/systemd/systemd/pull/26478 is released
             .arg("SYS_ADMIN,NET_ADMIN")
             .arg("--network")
-            .arg(format!("container:consul-{consul_port}"))
+            .arg("wiresmith")
             .arg("-v")
             .arg(concat!(
                 env!("CARGO_BIN_EXE_wiresmith"),
@@ -92,7 +92,7 @@ impl WiresmithContainer {
             .args(args.clone())
             // To diagnose issues, it's sometimes helpful to comment out the following line so that
             // we can see log output from the wiresmith instances inside the containers.
-            .stdout(Stdio::null())
+            // .stdout(Stdio::null())
             .spawn()
             .expect("Couldn't run systemd in podman");
 

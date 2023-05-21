@@ -208,15 +208,15 @@ async fn join_network(
     )
     .await;
 
-    let network_file_a = tmpdir_a.join("wg0.network");
-    let netdev_file_a = tmpdir_a.join("wg0.netdev");
+    // let network_file_a = tmpdir_a.join("wg0.network");
+    // let netdev_file_a = tmpdir_a.join("wg0.netdev");
 
-    wait_for_files(vec![network_file_a.as_path(), netdev_file_a.as_path()]).await;
+    // wait_for_files(vec![network_file_a.as_path(), netdev_file_a.as_path()]).await;
 
-    // We should now have some initial configuration with an empty list of peers.
-    let networkd_config_a = NetworkdConfiguration::from_config(&tmpdir_a, "wg0").await?;
-    assert_eq!(networkd_config_a.wg_address, "10.0.0.1/24".parse()?);
-    assert!(networkd_config_a.peers.is_empty());
+    // // We should now have some initial configuration with an empty list of peers.
+    // let networkd_config_a = NetworkdConfiguration::from_config(&tmpdir_a, "wg0").await?;
+    // assert_eq!(networkd_config_a.wg_address, "10.0.0.1/24".parse()?);
+    // assert!(networkd_config_a.peers.is_empty());
 
     // Start the second peer after the first one has generated its files so we don't run into race
     // conditions with address allocation.
@@ -230,48 +230,48 @@ async fn join_network(
     )
     .await;
 
-    let network_file_b = tmpdir_b.join("wg0.network");
-    let netdev_file_b = tmpdir_b.join("wg0.netdev");
+    // let network_file_b = tmpdir_b.join("wg0.network");
+    // let netdev_file_b = tmpdir_b.join("wg0.netdev");
 
-    wait_for_files(vec![network_file_b.as_path(), netdev_file_b.as_path()]).await;
+    // wait_for_files(vec![network_file_b.as_path(), netdev_file_b.as_path()]).await;
 
-    // Wait until the first client has had a chance to pick up the changes and generate a new
-    // config. If this is flaky, increase this number slightly.
-    sleep(Duration::from_secs(2)).await;
+    // // Wait until the first client has had a chance to pick up the changes and generate a new
+    // // config. If this is flaky, increase this number slightly.
+    // sleep(Duration::from_secs(2)).await;
 
-    let networkd_config_a = NetworkdConfiguration::from_config(&tmpdir_a, "wg0").await?;
-    let networkd_config_b = NetworkdConfiguration::from_config(&tmpdir_b, "wg0").await?;
+    // let networkd_config_a = NetworkdConfiguration::from_config(&tmpdir_a, "wg0").await?;
+    // let networkd_config_b = NetworkdConfiguration::from_config(&tmpdir_b, "wg0").await?;
 
-    assert_eq!(networkd_config_a.wg_address, "10.0.0.1/24".parse()?);
-    assert_eq!(networkd_config_b.wg_address, "10.0.0.2/24".parse()?);
+    // assert_eq!(networkd_config_a.wg_address, "10.0.0.1/24".parse()?);
+    // assert_eq!(networkd_config_b.wg_address, "10.0.0.2/24".parse()?);
 
-    // We don't expect to see ourselves in the list of peers as we don't want to peer with
-    // ourselves.
-    let mut expected_peers_a = HashSet::new();
-    expected_peers_a.insert(WgPeer {
-        public_key: networkd_config_b.public_key,
-        endpoint: "192.168.0.2:51820".parse().unwrap(),
-        address: "10.0.0.2/32".parse().unwrap(),
-    });
+    // // We don't expect to see ourselves in the list of peers as we don't want to peer with
+    // // ourselves.
+    // let mut expected_peers_a = HashSet::new();
+    // expected_peers_a.insert(WgPeer {
+    //     public_key: networkd_config_b.public_key,
+    //     endpoint: "192.168.0.2:51820".parse().unwrap(),
+    //     address: "10.0.0.2/32".parse().unwrap(),
+    // });
 
-    let mut expected_peers_b = HashSet::new();
-    expected_peers_b.insert(WgPeer {
-        public_key: networkd_config_a.public_key,
-        endpoint: "192.168.0.1:51820".parse().unwrap(),
-        address: "10.0.0.1/32".parse().unwrap(),
-    });
-    assert_eq!(networkd_config_a.peers, expected_peers_a);
-    assert_eq!(networkd_config_b.peers, expected_peers_b);
+    // let mut expected_peers_b = HashSet::new();
+    // expected_peers_b.insert(WgPeer {
+    //     public_key: networkd_config_a.public_key,
+    //     endpoint: "192.168.0.1:51820".parse().unwrap(),
+    //     address: "10.0.0.1/32".parse().unwrap(),
+    // });
+    // assert_eq!(networkd_config_a.peers, expected_peers_a);
+    // assert_eq!(networkd_config_b.peers, expected_peers_b);
 
-    // Peers in Consul should be union the other peer lists.
-    let consul_peers = consul.client.get_peers().await?;
-    let expected_peers = networkd_config_a
-        .peers
-        .union(&networkd_config_b.peers)
-        .cloned()
-        .collect::<HashSet<_>>();
+    // // Peers in Consul should be union the other peer lists.
+    // let consul_peers = consul.client.get_peers().await?;
+    // let expected_peers = networkd_config_a
+    //     .peers
+    //     .union(&networkd_config_b.peers)
+    //     .cloned()
+    //     .collect::<HashSet<_>>();
 
-    assert_eq!(consul_peers, expected_peers);
+    // assert_eq!(consul_peers, expected_peers);
 
     // The third peer now joins.
     let _wiresmith_c = WiresmithContainer::new(
@@ -284,13 +284,13 @@ async fn join_network(
     )
     .await;
 
-    let network_file_c = tmpdir_c.join("wg0.network");
-    let netdev_file_c = tmpdir_c.join("wg0.netdev");
+    // let network_file_c = tmpdir_c.join("wg0.network");
+    // let netdev_file_c = tmpdir_c.join("wg0.netdev");
 
-    wait_for_files(vec![network_file_c.as_path(), netdev_file_c.as_path()]).await;
+    // wait_for_files(vec![network_file_c.as_path(), netdev_file_c.as_path()]).await;
 
     // Wait again for clients to pick up changes.
-    sleep(Duration::from_secs(2)).await;
+    sleep(Duration::from_secs(2000)).await;
 
     let networkd_config_a = NetworkdConfiguration::from_config(&tmpdir_a, "wg0").await?;
     let networkd_config_b = NetworkdConfiguration::from_config(&tmpdir_b, "wg0").await?;

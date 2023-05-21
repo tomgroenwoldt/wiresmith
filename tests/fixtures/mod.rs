@@ -109,6 +109,8 @@ where
         .arg(format!("{http_port}:{http_port}"))
         .arg("-l")
         .arg(format!("testport={http_port}"))
+        .arg("--network")
+        .arg("wiresmith")
         .arg("docker.io/hashicorp/consul")
         .arg("agent")
         .arg("-dev")
